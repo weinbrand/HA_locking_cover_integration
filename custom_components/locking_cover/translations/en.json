@@ -73,11 +73,6 @@
       }
     }
   },
-  "exceptions": {
-    "cannot_lock": {
-      "message": "Cannot lock: the cover must be closed and both bolts must be locked."
-    }
-  },
   "issues": {
     "identical_bolt_sensors": {
       "title": "Identical bolt sensors configured",

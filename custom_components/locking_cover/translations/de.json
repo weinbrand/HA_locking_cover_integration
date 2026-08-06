@@ -73,11 +73,6 @@
       }
     }
   },
-  "exceptions": {
-    "cannot_lock": {
-      "message": "Verriegeln nicht möglich: Das Cover muss geschlossen sein und beide Bolzen müssen verriegelt sein."
-    }
-  },
   "issues": {
     "identical_bolt_sensors": {
       "title": "Identische Bolzensensoren konfiguriert",

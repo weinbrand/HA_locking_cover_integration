@@ -36,7 +36,6 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
 )
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
-from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event
@@ -503,17 +502,33 @@ class LockingCoverController:
     # ------------------------------------------------------------------
 
     async def async_request_lock(self) -> None:
-        """Handle a lock.lock() call on the virtual lock entity."""
+        """Handle a lock.lock() call on the virtual lock entity.
+
+        If the cover is not yet fully closed with both bolts locked, this
+        now drives the cover down to its lower end-stop instead of
+        rejecting the call. Tensioning itself still only ever engages
+        reactively - once _async_evaluate() observes cover=closed and
+        bolt_state=LOCKED (e.g. after the close finishes and the bolts
+        mechanically engage) - so "Lock" effectively becomes "close and
+        lock" for a cover that is not yet down.
+        """
+        if self.state.tension_state in (TensionState.TENSIONED, TensionState.TENSIONING):
+            return
+
         source = self.hass.states.get(self.config.source_cover)
         cover_closed = source is not None and source.state == STATE_CLOSED
-        if self.state.tension_state == TensionState.TENSIONED:
+
+        if cover_closed and self.state.bolt_state == BoltState.LOCKED:
+            await self._async_start_tension(reason="manual_lock")
             return
-        if not (cover_closed and self.state.bolt_state == BoltState.LOCKED):
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="cannot_lock",
-            )
-        await self._async_start_tension(reason="manual_lock")
+
+        _LOGGER.info(
+            "[%s] Verriegeln angefordert: Cover ist noch nicht in unterer Endlage, "
+            "fahre zunächst herunter (Spannen erfolgt automatisch, sobald geschlossen "
+            "und beide Bolzen verriegelt melden)",
+            self.config.name,
+        )
+        await self.async_request_close()
 
     async def async_request_unlock(self) -> None:
         """Handle a lock.unlock() call on the virtual lock entity (Fall 1)."""
