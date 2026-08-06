@@ -37,6 +37,10 @@ BOLT_DEBOUNCE_S = 0.5
 RELAX_TIME_OFFSET_MS = 1000
 MIN_RELAX_TIME_MS = 2000
 
+# --- Signals -----------------------------------------------------------------
+
+SIGNAL_UPDATE = f"{DOMAIN}_update_{{entry_id}}"
+
 # --- Storage -----------------------------------------------------------------
 
 STORAGE_VERSION = 1
