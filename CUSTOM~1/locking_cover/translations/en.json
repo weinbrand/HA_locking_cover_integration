@@ -1,0 +1,109 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Locking Cover",
+        "description": "Creates a new Locking Cover lock as a wrapper around an existing cover entity. The same sensor may be selected for both bolt sensors for testing purposes; this will be flagged as a diagnostic repair issue.",
+        "data": {
+          "name": "Name",
+          "source_cover_entity_id": "Source cover",
+          "bolt_left_entity_id": "Left bolt sensor",
+          "bolt_right_entity_id": "Right bolt sensor",
+          "tension_time_ms": "Tension time (ms)",
+          "open_timeout_s": "Open timeout (s)"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This source cover is already configured as a Locking Cover."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Locking Cover options",
+        "data": {
+          "bolt_left_entity_id": "Left bolt sensor",
+          "bolt_right_entity_id": "Right bolt sensor",
+          "tension_time_ms": "Tension time (ms)",
+          "open_timeout_s": "Open timeout (s)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "bolt_state": {
+        "name": "Bolt",
+        "state": {
+          "locked": "Locked",
+          "unlocked": "Unlocked",
+          "partially_locked": "Partially locked",
+          "unknown": "Unknown"
+        }
+      },
+      "tension_state": {
+        "name": "Tension",
+        "state": {
+          "tensioned": "Tensioned",
+          "relaxed": "Relaxed",
+          "tensioning": "Tensioning",
+          "relaxing": "Relaxing",
+          "unknown": "Unknown"
+        }
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "ready": "Ready",
+          "sequence_running": "Sequence running",
+          "waiting_for_unlock": "Waiting for unlock",
+          "error": "Error"
+        }
+      },
+      "last_error": {
+        "name": "Last error",
+        "state": {
+          "none": "No error",
+          "timeout_waiting_for_unlock": "Timeout waiting for unlock",
+          "source_cover_unavailable": "Source cover unavailable",
+          "interrupted_sequence": "Sequence interrupted",
+          "invalid_sensor_configuration": "Invalid sensor configuration"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "cannot_lock": {
+      "message": "Cannot lock: the cover must be closed and both bolts must be locked."
+    }
+  },
+  "issues": {
+    "identical_bolt_sensors": {
+      "title": "Identical bolt sensors configured",
+      "description": "For '{name}', the left and right bolt sensor are the same entity. This is only intended for testing. Please select two different sensors in the options as soon as they are available."
+    }
+  },
+  "services": {
+    "reset_error": {
+      "name": "Reset error",
+      "description": "Clears the last recorded error of a Locking Cover instance.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Instance",
+          "description": "The Locking Cover config entry whose error should be cleared."
+        }
+      }
+    },
+    "force_relax": {
+      "name": "Force relax",
+      "description": "Manually triggers a relax (down-pulse) sequence regardless of the current state. Intended for maintenance/recovery.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Instance",
+          "description": "The Locking Cover config entry to relax."
+        }
+      }
+    }
+  }
+}
