@@ -14,7 +14,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from homeassistant.components.cover import ATTR_POSITION, CoverEntity, CoverEntityFeature
+from homeassistant.components.cover import (
+    ATTR_CURRENT_POSITION,
+    ATTR_POSITION,
+    CoverEntity,
+    CoverEntityFeature,
+)
 from homeassistant.const import STATE_CLOSED, STATE_CLOSING, STATE_OPENING, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -67,7 +72,12 @@ class LockingCoverCoverEntity(LockingCoverEntity, CoverEntity):
         source = self._source_state
         if source is None:
             return None
-        return source.attributes.get(ATTR_POSITION)
+        # NOTE: ATTR_POSITION ("position") is the *service call* argument
+        # used to command a target position. The entity's own reported
+        # current position is a state *attribute* under ATTR_CURRENT_POSITION
+        # ("current_position") - reading ATTR_POSITION here would always be
+        # None. See PROGRESS.md for the bugfix history.
+        return source.attributes.get(ATTR_CURRENT_POSITION)
 
     @property
     def is_closed(self) -> bool | None:
