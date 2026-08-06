@@ -1,0 +1,109 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Locking Cover einrichten",
+        "description": "Erstellt eine neue Locking-Cover-Verriegelung als Wrapper um eine vorhandene Cover-Entity. Für Testzwecke darf für beide Bolzensensoren derselbe Sensor gewählt werden; dies wird als Diagnose-Repair gemeldet.",
+        "data": {
+          "name": "Name",
+          "source_cover_entity_id": "Quell-Cover",
+          "bolt_left_entity_id": "Bolzensensor links",
+          "bolt_right_entity_id": "Bolzensensor rechts",
+          "tension_time_ms": "Spannzeit (ms)",
+          "open_timeout_s": "Timeout Öffnung (s)"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Dieses Quell-Cover ist bereits als Locking Cover eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Locking Cover Optionen",
+        "data": {
+          "bolt_left_entity_id": "Bolzensensor links",
+          "bolt_right_entity_id": "Bolzensensor rechts",
+          "tension_time_ms": "Spannzeit (ms)",
+          "open_timeout_s": "Timeout Öffnung (s)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "bolt_state": {
+        "name": "Bolzen",
+        "state": {
+          "locked": "Verriegelt",
+          "unlocked": "Entriegelt",
+          "partially_locked": "Teilweise verriegelt",
+          "unknown": "Unbekannt"
+        }
+      },
+      "tension_state": {
+        "name": "Spannung",
+        "state": {
+          "tensioned": "Gespannt",
+          "relaxed": "Entspannt",
+          "tensioning": "Spannt",
+          "relaxing": "Entspannt sich",
+          "unknown": "Unbekannt"
+        }
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "ready": "Bereit",
+          "sequence_running": "Bewegung aktiv",
+          "waiting_for_unlock": "Wartet auf Entriegelung",
+          "error": "Fehler"
+        }
+      },
+      "last_error": {
+        "name": "Letzter Fehler",
+        "state": {
+          "none": "Kein Fehler",
+          "timeout_waiting_for_unlock": "Timeout beim Warten auf Entriegelung",
+          "source_cover_unavailable": "Quell-Cover nicht verfügbar",
+          "interrupted_sequence": "Bewegungsablauf unterbrochen",
+          "invalid_sensor_configuration": "Ungültige Sensorkonfiguration"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "cannot_lock": {
+      "message": "Verriegeln nicht möglich: Das Cover muss geschlossen sein und beide Bolzen müssen verriegelt sein."
+    }
+  },
+  "issues": {
+    "identical_bolt_sensors": {
+      "title": "Identische Bolzensensoren konfiguriert",
+      "description": "Bei '{name}' sind linker und rechter Bolzensensor identisch. Dies ist nur für Testzwecke vorgesehen. Bitte sobald verfügbar zwei unterschiedliche Sensoren in den Optionen auswählen."
+    }
+  },
+  "services": {
+    "reset_error": {
+      "name": "Fehler zurücksetzen",
+      "description": "Setzt den zuletzt aufgetretenen Fehler einer Locking-Cover-Instanz zurück.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Instanz",
+          "description": "Die Locking-Cover Config-Entry, deren Fehler zurückgesetzt werden soll."
+        }
+      }
+    },
+    "force_relax": {
+      "name": "Manuell entspannen",
+      "description": "Löst unabhängig vom aktuellen Zustand einen Entspannvorgang (Abwärtsimpuls) aus. Für Wartung/Recovery gedacht.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Instanz",
+          "description": "Die Locking-Cover Config-Entry, die entspannt werden soll."
+        }
+      }
+    }
+  }
+}
